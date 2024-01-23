@@ -8,7 +8,10 @@ const styles = StyleSheet.create({
         flex: 1, 
         borderWidth: 1, 
         borderColor: 'black',
-        padding: 30,
+        paddingTop: 10,
+        paddingRight: 40,
+        paddingLeft: 40,
+        height: windowHeight,
     },
     middleContainer: {
         alignItems: "center",
@@ -16,7 +19,7 @@ const styles = StyleSheet.create({
         borderWidth: 1, 
         borderColor: 'black',
         backgroundColor: "lightblue",
-        padding:10,
+        padding: 5,
         borderRadius: 20
     },
     innerContainer: {
@@ -33,13 +36,47 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 30
     }, 
-    dataContainer: {
-
-    },
     dataRating: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textAlign: "center"
     },
     dataComment: {
+        textAlign: "center"
+    },
+    averageRatingContainer: {
+        alignItems: "center",
+        margin: 5,
+    },
+    historyContainer: {
+        borderWidth: 1, 
+        borderColor: 'black',
+        marginBottom: 30,
+        borderRadius: 20,
+        backgroundColor: "lightblue",
+        alignItems: "center",
+        width: 320,
+        alignSelf: "center",
+    },
+    historyDataContainer: {
+        borderWidth: 1, 
+        borderColor: 'black',
+        padding: 5,
+        margin: 5,
+        borderRadius: 20,
+        backgroundColor: "white",
+        width: 250,
+    },
+    footerContainer: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        alignItems: "center"
+    },
+    historyText: {
+        fontWeight: "bold",
+        fontSize: 20,
+        paddingTop: 5
+    },
+    currentData: {
         
     },
 })

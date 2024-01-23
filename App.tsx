@@ -84,6 +84,9 @@ function CustomDrawerContent(props: any) {
         setProfileImage(downloadURL);
       } catch (error) {
         console.error('Error fetching profile image:', error.message);
+        const placeholderRef = firebase.storage().ref().child('placeholder.jpg');
+        const placeholderURL = await placeholderRef.getDownloadURL().catch(() => '');
+        setProfileImage(placeholderURL);
       }
     }
     };
@@ -99,7 +102,7 @@ function CustomDrawerContent(props: any) {
           <View style={{marginRight: 10, marginLeft: -10}}>
             <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
               <Image 
-                source={profileImage ? { uri: profileImage } : {uri: 'placeholder.jpg'}} 
+                source={profileImage ? { uri: profileImage } : {uri: 'placeholder'}} 
                 style={{width: 80, height: 80, borderWidth: 1, borderColor: 'black', borderRadius: 50}}
               />
             </TouchableOpacity>
