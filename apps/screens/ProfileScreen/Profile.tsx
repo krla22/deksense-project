@@ -111,26 +111,24 @@ const Profile = () => {
     }; 
 
   return (
-    <SafeAreaView style={{width: width, height: height, paddingTop: 50}}>
-      <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 20}}>
-        <Text>Change profile picture</Text>
+    <SafeAreaView style={{width: width, height: height, borderWidth: 1, borderColor: "black", padding: 10}}>
+      <View style={{marginTop: 20}}>
+        <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 20}}>
+          <Text style={{fontWeight: "bold", fontSize: 30}}>Change profile picture</Text>
+        </View>
+
+        <TouchableOpacity onPress={pickImage} style={{alignItems: 'center', borderWidth: 1, borderColor: "black", width: 150, alignSelf: 'center', marginTop: 20, borderRadius: 20, backgroundColor: "lightblue"}}>
+          <Text style={{fontSize: 20, padding: 10}}>Select Image</Text>
+        </TouchableOpacity>
+
+        <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 20}}>
+          {image && <Image source={{uri: image}} style={{width: 300, height: 300, borderWidth: 1, borderColor: "black"}}/>}
+        </View>
+
+        <TouchableOpacity onPress={uploadMedia} style={{alignItems: 'center', borderWidth: 1, borderColor: "black", width: 150, alignSelf: 'center', marginTop: 20, borderRadius: 20, marginBottom: 20, backgroundColor: "lightblue"}}>
+          <Text style={{fontSize: 20, padding: 10}}>Upload Image</Text>
+        </TouchableOpacity>
       </View>
-
-      <TouchableOpacity onPress={pickImage} style={{alignItems: 'center', borderWidth: 1, borderColor: "black", width: 100, alignSelf: 'center', marginTop: 20}}>
-        <Text>Select Image</Text>
-      </TouchableOpacity>
-
-      <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 20}}>
-        {image && <Image source={{uri: image}} style={{width: 300, height: 300}}/>}
-      </View>
-
-      <TouchableOpacity onPress={uploadMedia} style={{alignItems: 'center', borderWidth: 1, borderColor: "black", width: 100, alignSelf: 'center', marginTop: 20}}>
-        <Text>Upload Image</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={refreshProfileImage} style={{alignItems: 'center', borderWidth: 1, borderColor: "black", width: 100, alignSelf: 'center', marginTop: 20}}>
-        <Text>Return</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   )
 }

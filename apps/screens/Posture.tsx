@@ -1,39 +1,104 @@
-import { View, Text, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, Text, FlatList, ScrollView } from 'react-native';
 import styles from '../../stylesheets/datastyles';
+import { FIREBASE_AUTH, FIRESTORE_DB, REALTIME_DB } from '../../firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { ref, update } from 'firebase/database';
 
 const Posture = () => {
-  const [postureRating, setPostureRating] = useState(7);
+  const [postureRating, setPostureRating] = useState(6);
   const [postureComment, setPostureComment] = useState('');
   const [postureHistory, setPostureHistory] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
   const [averageComment, setAverageComment] = useState('');
+  const [updateCounter, setUpdateCounter] = useState(0);
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('');
+
+  const getUsername = async (user: string) => {
+    if (user) {
+        const userEmail = user.email;
+        const retrieveDoc = doc(FIRESTORE_DB, 'users', userEmail);
+
+        const docSnapshot = await getDoc(retrieveDoc);
+        const userData = docSnapshot.data();
+
+        const retrievedUsername = userData.username;
+        setUsername(retrievedUsername);
+    } else {
+        console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    const setAuth = onAuthStateChanged(FIREBASE_AUTH, async (user) => {
+      setUser(user);
+      getUsername(user);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user && username) {
+      const userDataRef = ref(REALTIME_DB, `/${username}`);
+      const averageData = {
+        averagePostureRating: averageRating,
+        averagePostureComment: averageComment,
+      };
+
+      update(userDataRef, averageData)
+        .then(() => {
+          console.log('Average data sent to Firebase successfully');
+        })
+        .catch((error) => {
+          console.error('Error sending average data to Firebase: ', error);
+        });
+    }
+  }, [user, username, averageRating, averageComment]);
+
+  useEffect(() => {
+    const updatePostureData = () => {
+      const newPostureRating = Math.floor(Math.random() * 10) + 1;
+      setPostureRating(newPostureRating);
+      setUpdateCounter((prevCounter) => prevCounter + 1);
+    };
+
+    const intervalId = setInterval(updatePostureData, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     const foundComment = postureComments.find(
       (item) => item.range[0] <= postureRating && postureRating <= item.range[1]
     );
-
+  
     setPostureComment(foundComment ? foundComment.comment : '');
-
-    const newArray = Array.from({ length: 12 }, (_, index) => ({
+  
+    const newArray = Array.from({ length: 10 }, (_, index) => ({
       rating: postureRating,
       comment: foundComment ? foundComment.comment : '',
     }));
-
-    const sumRating = newArray.reduce((sum, item) => sum + item.rating, 0);
-    const avgRating = sumRating / Math.max(newArray.length, 10);
-
-    const foundAvgComment = averageRatingComments.find(
-      (item) => item.range[0] <= avgRating && avgRating <= item.range[1]
-    );
-
-    setAverageRating(avgRating);
-    setAverageComment(foundAvgComment ? foundAvgComment.comment : '');
-
-    setPostureHistory(newArray.slice(0, 10));
+  
+    setPostureHistory((prevHistory) => [...prevHistory.slice(-9), newArray[0]]);
+    setUpdateCounter((prevCounter) => prevCounter + 1);
   }, [postureRating]);
+  
+  useEffect(() => {
+    const lastTenRatings = postureHistory.slice(-10);
+    const sumRating = lastTenRatings.reduce((sum, item) => sum + item.rating, 0);
+    const avgRating = sumRating / Math.max(lastTenRatings.length, 1);
+
+    const foundAvgComment = averageRatingComments.reduce((closest, current) => {
+        const currentDiff = Math.abs(avgRating - (current.range[0] + current.range[1]) / 2);
+        const closestDiff = Math.abs(avgRating - (closest.range[0] + closest.range[1]) / 2);
+
+        return currentDiff < closestDiff ? current : closest;
+    });
+
+    setAverageRating(parseFloat(avgRating.toFixed(2)));
+    setAverageComment(foundAvgComment.comment);
+}, [postureHistory, updateCounter]);
 
   const postureComments = [
     { range: [1, 2], comment: 'Your posture is horrible! This is bad for your back!' },
@@ -59,7 +124,7 @@ const Posture = () => {
 
       <View style={styles.middleContainer}>
         <View style={styles.innerContainer}>
-          <Text style={styles.historyText}>Current Posture</Text>
+          <Text style={styles.historyText}>Current Posture Rating</Text>
           <Text style={styles.dataRating}>Rating: {postureRating}</Text>
           <Text style={styles.dataComment}>Comment: {postureComment}</Text>
         </View>
@@ -74,12 +139,11 @@ const Posture = () => {
       <View style={styles.historyContainer}>
         <Text style={styles.historyText}>History</Text>
         <FlatList
-          data={postureHistory}
+          data={postureHistory.slice().reverse()}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.historyDataContainer}>
-              <Text style={styles.dataRating}>{`Rating: ${item.rating}`}</Text>
-              <Text style={styles.dataComment}>{`${item.comment}`}</Text>
+              <Text style={styles.dataRating}>{`Posture Rating: ${item.rating}/10`}</Text>
             </View>
           )}
         />

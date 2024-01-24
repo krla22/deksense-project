@@ -83,13 +83,12 @@ function CustomDrawerContent(props: any) {
         const downloadURL = await storageRef.getDownloadURL();
         setProfileImage(downloadURL);
       } catch (error) {
-        console.error('Error fetching profile image:', error.message);
         const placeholderRef = firebase.storage().ref().child('placeholder.jpg');
         const placeholderURL = await placeholderRef.getDownloadURL().catch(() => '');
         setProfileImage(placeholderURL);
       }
     }
-    };
+  };
 
   const navigation = useNavigation();
   fetchProfileImage();
@@ -133,7 +132,7 @@ const App = () => {
           drawerIcon: ({ size, color }) => (
             <Ionicons name="book" size={size} color={color} />
           )}} />
-        <Drawer.Screen name="Profile" component={Profile} options={{headerShown: false, drawerItemStyle: { display: 'none' }}}/>
+        <Drawer.Screen name="Profile" component={Profile} options={{drawerItemStyle: { display: 'none' }, headerStyle: {backgroundColor:"lightgreen"}}}/>
 
         <Drawer.Screen name="Dashboard" component={Dashboard} options={{
             headerStyle: {backgroundColor:"lightgreen"}, 

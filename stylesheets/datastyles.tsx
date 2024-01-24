@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         backgroundColor: "lightblue",
         padding: 5,
-        borderRadius: 20
+        borderRadius: 20,
+        width: windowWidth - 90
     },
     innerContainer: {
         alignItems: "center",
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: "lightblue",
         alignItems: "center",
-        width: 320,
+        width: windowWidth - 90,
         alignSelf: "center",
     },
     historyDataContainer: {
